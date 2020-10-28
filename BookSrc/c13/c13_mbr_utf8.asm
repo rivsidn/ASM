@@ -20,25 +20,25 @@
          mov ebx,edx                        ;段内起始偏移地址 
 
          ;跳过0#号描述符的槽位 
-         ;创建1#描述符，这是一个数据段，对应0~4GB的线性地址空间
-         mov dword [ebx+0x08],0x0000ffff    ;基地址为0，段界限为0xFFFFF
-         mov dword [ebx+0x0c],0x00cf9200    ;粒度为4KB，存储器段描述符 
+	 ;1# 描述符，32位向上拓展数据段，0-0xffffffff，4G，可写
+         mov dword [ebx+0x08],0x0000ffff
+         mov dword [ebx+0x0c],0x00cf9200
 
-         ;创建保护模式下初始代码段描述符
-         mov dword [ebx+0x10],0x7c0001ff    ;基地址为0x00007c00，界限0x1FF 
-         mov dword [ebx+0x14],0x00409800    ;粒度为1个字节，代码段描述符 
+	 ;2# 描述符，32位代码段，基地址 0x7c00，段界限0x1ff ，不可读
+         mov dword [ebx+0x10],0x7c0001ff
+         mov dword [ebx+0x14],0x00409800
 
-         ;建立保护模式下的堆栈段描述符      ;基地址为0x00007C00，界限0xFFFFE 
-         mov dword [ebx+0x18],0x7c00fffe    ;粒度为4KB 
+	 ;3# 描述符，32位向下拓展数据段，基地址0x7c00，段界限0xFFFFE，4096字节，可写
+         mov dword [ebx+0x18],0x7c00fffe
          mov dword [ebx+0x1c],0x00cf9600
          
-         ;建立保护模式下的显示缓冲区描述符   
-         mov dword [ebx+0x20],0x80007fff    ;基地址为0x000B8000，界限0x07FFF 
-         mov dword [ebx+0x24],0x0040920b    ;粒度为字节
+	 ;4# 描述符，32位向上拓展数据段，0xb8000，段界限0x7FFF，可写
+         mov dword [ebx+0x20],0x80007fff
+         mov dword [ebx+0x24],0x0040920b
          
-         ;初始化描述符表寄存器GDTR
-         mov word [cs: pgdt+0x7c00],39      ;描述符表的界限   
+         mov word [cs: pgdt+0x7c00],39      ;39 = (5*8)-1
  
+         ;初始化描述符表寄存器GDTR
          lgdt [cs: pgdt+0x7c00]
       
          in al,0x92                         ;南桥芯片内的端口 
@@ -139,6 +139,10 @@ read_hard_disk_0:                        ;从硬盘读取一个逻辑扇区
                                          ;EAX=逻辑扇区号
                                          ;DS:EBX=目标缓冲区地址
                                          ;返回：EBX=EBX+512 
+	
+	 ;读磁盘的执行步骤
+	 ;扇区数量，起始扇区号，读命令
+	 ;等待直到数据可读
          push eax 
          push ecx
          push edx

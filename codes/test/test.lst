@@ -1,0 +1,22 @@
+     1                                  
+     2                                  SECTION code align=16 vstart=0
+     3 00000000 6689D8                  mov eax, ebx
+     4 00000003 6689D8                  mov eax, ebx
+     5 00000006 6689D8                  mov eax, ebx
+     6 00000009 6689D8                  mov eax, ebx
+     7 0000000C 6689D8                  mov eax, ebx
+     8 0000000F 6689D8                  mov eax, ebx
+     9 00000012 6689D8                  mov eax, ebx
+    10 00000015 6689D8                  mov eax, ebx
+    11 00000018 6689D8                  mov eax, ebx
+    12 0000001B 6689D8                  mov eax, ebx
+    13 0000001E 6689D8                  mov eax, ebx
+    14 00000021 6689D8                  mov eax, ebx
+    15 00000024 6689D8                  mov eax, ebx
+    16 00000027 6689D8                  mov eax, ebx
+    17 0000002A 6689D8                  mov eax, ebx
+    18 0000002D 6689D8                  mov eax, ebx
+    19                                  
+    20                                  SECTION data align=16 vstart=0
+    21                                  
+    22                                  

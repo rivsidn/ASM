@@ -4,12 +4,13 @@
          ;创建日期：2011-10-26 12:11
 
          ;以下常量定义部分。内核的大部分内容都应当固定 
-         core_code_seg_sel     equ  0x38    ;内核代码段选择子
-         core_data_seg_sel     equ  0x30    ;内核数据段选择子 
-         sys_routine_seg_sel   equ  0x28    ;系统公共例程代码段的选择子 
-         video_ram_seg_sel     equ  0x20    ;视频显示缓冲区的段选择子
-         core_stack_seg_sel    equ  0x18    ;内核堆栈段选择子
          mem_0_4_gb_seg_sel    equ  0x08    ;整个0-4GB内存的段的选择子
+	 				    ;此处省略了2# 描述符
+         core_stack_seg_sel    equ  0x18    ;内核堆栈段选择子
+         video_ram_seg_sel     equ  0x20    ;视频显示缓冲区的段选择子
+         sys_routine_seg_sel   equ  0x28    ;系统公共例程代码段的选择子 
+         core_data_seg_sel     equ  0x30    ;内核数据段选择子 
+         core_code_seg_sel     equ  0x38    ;内核代码段选择子
 
 ;-------------------------------------------------------------------------------
          ;以下是系统核心的头部，用于加载核心程序 
@@ -273,6 +274,7 @@ set_up_gdt_descriptor:                      ;在GDT内安装一个新的描述�
          mov ebx,core_data_seg_sel          ;切换到核心数据段
          mov ds,ebx
 
+	 ;TODO 这一段没看明白？？？
          sgdt [pgdt]                        ;以便开始处理GDT
 
          mov ebx,mem_0_4_gb_seg_sel
@@ -574,7 +576,7 @@ start:
       
          mov [esp_pointer],esp               ;临时保存堆栈指针
        
-         mov ds,ax
+         mov ds,ax			     ;将用户态程序加载到了什么位置
       
          jmp far [0x10]                      ;控制权交给用户程序（入口点）
                                              ;堆栈可能切换 
