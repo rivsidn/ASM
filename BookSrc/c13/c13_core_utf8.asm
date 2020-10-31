@@ -274,7 +274,6 @@ set_up_gdt_descriptor:                      ;在GDT内安装一个新的描述�
          mov ebx,core_data_seg_sel          ;切换到核心数据段
          mov ds,ebx
 
-	 ;TODO 这一段没看明白？？？
          sgdt [pgdt]                        ;以便开始处理GDT
 
          mov ebx,mem_0_4_gb_seg_sel
@@ -283,7 +282,7 @@ set_up_gdt_descriptor:                      ;在GDT内安装一个新的描述�
          movzx ebx,word [pgdt]              ;GDT界限 
          inc bx                             ;GDT总字节数，也是下一个描述符偏移 
          add ebx,[pgdt+2]                   ;下一个描述符的线性地址 
-      
+
          mov [es:ebx],eax
          mov [es:ebx+4],edx
       
@@ -462,6 +461,7 @@ load_relocate_program:                      ;加载并重定位用户程序
          mov [edi+0x1c],cx
 
          ;建立程序堆栈段描述符
+         ;用户程序只指定了应该分配的堆栈的大小，需要用户自己申请内存
          mov ecx,[edi+0x0c]                 ;4KB的倍率 
          mov ebx,0x000fffff
          sub ebx,ecx                        ;得到段界限
@@ -476,15 +476,16 @@ load_relocate_program:                      ;加载并重定位用户程序
          mov [edi+0x08],cx
 
          ;重定位SALT
+         ;将当前程序的地址传递给用户程序，用户程序通过这个来访问core程序
          mov eax,[edi+0x04]
          mov es,eax                         ;es -> 用户程序头部 
          mov eax,core_data_seg_sel
          mov ds,eax
-      
+
          cld
 
          mov ecx,[es:0x24]                  ;用户程序的SALT条目数
-         mov edi,0x28                       ;用户程序内的SALT位于头部内0x2c处
+         mov edi,0x28                       ;用户程序内的SALT位于头部内0x28处
   .b2: 
          push ecx
          push edi
